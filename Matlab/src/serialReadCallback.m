@@ -10,10 +10,16 @@ global Freq
 global isTrained
 global NumOfClass
 global NumOfData
+global Average
+global showAverage
+global showText
+global showGraph
+global showAxis
 
 % Cell container for color and label for each class
 classColor = {'r','g','b','m','c'};
-classLabel = {'No Touch','Correct','Brandy','Finger in','Drunk'};
+classLabel = {'No Touch','Correct','Grasping','Finger In','Drunk Up'};
+
 
 % Start when enought data is stocked
 % Data consist of 4 start byte (255) and 200 set of (freqMSB freqLSB volMS volLSB)
@@ -35,16 +41,16 @@ while(obj.BytesAvailable>=804)
             Freq = bitor(bitsll(S(:,1), 8), S(:,2));
             Voltage = bitor(bitsll(S(:,3), 8), S(:,4));
             
-            % plot new data
-            plot(Freq, Voltage);
-            axis([0 NumOfData 0 4096]);
-            xlabel('Step of Frequency [ ]');
-            ylabel('Voltage [mV]');
-            drawnow
-            
+            if(isTrained == 0)
+                %plot new data
+                plot(Freq, Voltage,'k-','LineWidth',5);
+                axis([0 NumOfData 0 4096]);
+                xlabel('Step of Frequency [ ]');
+                ylabel('Voltage [mV]');
+                drawnow
             % execute classification after finishing training
-            if(isTrained == 1)
-                class = 0;
+            elseif(isTrained == 1)
+                tmpclass = 0;
                 maxScore = 0;
                 % calculate score for each class
                 for j = 1:NumOfClass;
@@ -52,14 +58,40 @@ while(obj.BytesAvailable>=804)
                     % score = [falserate truerate]
                     % take the highest score (truerate)
                     if(maxScore < score(1,2))
-                        class = j;
+                        tmpclass = j;
                         maxScore = score(1,2);
                     end
                 end
-                if(class ~= 0)
-                    % display classification result
-                    text(100,3500,char(classLabel(class)),'Fontsize',32,'HorizontalAlignment','center','Color',char(classColor(class)));
+                % show graph of test data or not
+                if(showGraph == 1)
+                    plot(Freq, Voltage,'k-','LineWidth',5);
+                    hold on
                 end
+                % show graph of training data or not
+                if(showAverage == 1)
+                    for i=1:NumOfClass
+                        plot(Freq, Average(:,i),strcat(char(classColor(i)),'-'),'LineWidth',3);
+                        hold on
+                    end
+                end
+                % set axis
+                axis([0 NumOfData 0 4096]);
+                % show axis or not
+                if (showAxis == 0)
+                    axis off
+                else
+                    xlabel('Step of Frequency [ ]');
+                    ylabel('Voltage [mV]');
+                end
+                if(tmpclass ~= 0)
+                    % display classification result
+                    if(showText == 1)
+                        text(100,500,char(classLabel(tmpclass)),'Fontsize',160,'HorizontalAlignment','center','Color',char(classColor(tmpclass)));
+                    end
+                end
+                hold off
+                % draw here
+                drawnow
             end
         end
     end

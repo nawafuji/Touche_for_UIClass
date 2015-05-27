@@ -8,7 +8,13 @@ global Voltage
 global svmClassifier
 global isTrained
 global NumOfClass
+global NumOfData
 global isFinish
+global Average
+global showAverage
+global showText
+global showGraph
+global showAxis
 
 filename = '../data/trainingData.txt';
 filename1 = '../data/notouch.txt';
@@ -46,6 +52,44 @@ switch event.Character
     case 'z'
         svmClassifier = makeClassifier(filename, NumOfClass);
         isTrained = 1;
+        Average = makeAverage(filename,NumOfData,NumOfClass);
         disp('Training finished');
         disp('Switch touche to recognize gesture');
+        
+    % -------------------------------------------------------------------
+    % g - graph visualization setting
+    % -------------------------------------------------------------------
+    case 'g'
+        if (showGraph == 0)
+            showGraph = 1;
+        else
+            showGraph = 0;
+        end
+    % -------------------------------------------------------------------
+    % a - average graph visualization setting
+    % -------------------------------------------------------------------
+    case 'a'
+        if (showAverage == 0)
+            showAverage = 1;
+        else
+            showAverage = 0;
+        end
+    % -------------------------------------------------------------------
+    % t - classification result visualization setting
+    % -------------------------------------------------------------------
+    case 't'
+        if (showText == 0)
+            showText = 1;
+        else
+            showText = 0;
+        end
+    % -------------------------------------------------------------------
+    % g - axis visualization setting
+    % -------------------------------------------------------------------
+    case 'x'
+        if (showAxis == 0)
+            showAxis = 1;
+        else
+            showAxis = 0;
+        end
 end

@@ -15,6 +15,10 @@ global isTrained        % Number of data (frequency resolution)
 global NumOfData        % Number of Class
 global NumOfClass       % Flag indicating if process should be stopped
 global isFinish         % Flag indicating if training is finished
+global showAverage      % Flag indicating if Average is showed
+global showText         % Flag indicating if Text is showed
+global showGraph        % Flag indicating if Graph is showed
+global showAxis         % Flag indicating if Axis of Graph is showed
 
 %--------------------------------------------------------------------
 % Initialization of global instances
@@ -27,6 +31,10 @@ NumOfData = 200;
 NumOfClass = 5;
 isFinish = 0;
 isTrained = 0;
+showGraph = 1;
+showAverage = 0;
+showText = 1;
+showAxis = 0;
 
 %--------------------------------------------------------------------
 % Callback setting 
@@ -37,8 +45,8 @@ isTrained = 0;
 [s, flag] = setupSerial('/dev/cu.usbmodem1451');
 
 % set up figure with key press callback
-figure('KeyPressFcn',@keyPressedCallback);
-
+figure('KeyPressFcn',@keyPressedCallback,'Color','white','Menu','none');
+axis off;
 %--------------------------------------------------------------------
 % Main loop
 %--------------------------------------------------------------------
@@ -46,24 +54,13 @@ figure('KeyPressFcn',@keyPressedCallback);
 disp('-------------------------------------------------------');
 disp('Press z key to toggle training');
 disp('Press c key to stop running');
+disp('Press a key to change setting to show average graph of training data');
+disp('Press g key to change setting to show graph of test data');
+disp('Press t key to change setting to show result of classification');
 disp('-------------------------------------------------------');
 
 while (1)
     pause(0.1);
-    if(DataReceived == 1)
-        % only for first time
-        if(isFirst == 0)
-            h = plot(Freq, Voltage);
-            drawnow
-            isFirst = 1;
-            
-        % refresh from second time
-        else
-            refreshdata(h)
-            drawnow
-        end
-        DataReceived = 0;
-    end
     % check finish flag
     if(isFinish == 1)
         break;
